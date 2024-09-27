@@ -1,0 +1,55 @@
+
+##------------------------------------------------------------------------------------------------------
+## GeneFamilies analysis 
+## Date - 27 September 2024
+##------------------------------------------------------------------------------------------------------
+
+##------------------------------------------------------------------------------------------------------
+# (1) Install the required package
+install.packages("readr")
+# Load the installed Package
+library(readr)
+
+##------------------------------------------------------------------------------------------------------
+## (2) set working directory 
+setwd("C:/Users/smeeta.shrestha/Desktop/2024_human_choline_bgi_2/humann3_genefam/")
+
+##------------------------------------------------------------------------------------------------------
+## (3)  Load in the genefamilies relab 
+genefam <- read.csv("merge_genefamilies_relab_uniref90.tsv", stringsAsFactors = FALSE, header = TRUE);head(dat)
+
+# Reading the contents of TSV file using read_tsv() method
+genefam<-readr::read_tsv("merge_genefamilies_relab.tsv")
+dim(genefam)
+# Read tsv files using read.delim() method
+df<-read.delim("merge_genefamilies_relab_uniref90.tsv",sep="\t")
+dim(df)
+head(df)
+class(df)
+columns <- colnames(df);columns
+
+##------------------------------------------------------------------------------------------------------
+## (4) clean the data 
+## (4a) Filter - remove the row where we see the word "unclassified"
+
+## How do I drop rows that contain a specific string in R?
+df1 <- df[!grepl('unclassified', df$X..Gene.Family),]
+dim(df1)
+head(df1)
+## (4b) Filter - remove the row where we see the word "NO_NAME"
+df2 <- df1[!grepl('NO_NAME',df1$X..Gene.Family),]
+dim(df2)
+head(df2)
+## (4c) Keep only those rows which have bacteria/taxa information along with the uniref90 gene name 
+# Selecting rows in dataframe in R  based on partial row content.
+# Selecting data frame rows based on partial string match in a column
+library(data.table)
+df3 <- df2[df2$X..Gene.Family %like% "g__", ]
+dim(df3)
+##------------------------------------------------------------------------------------------------------
+## (5) export 
+write.csv(df3,"genefam_uniref90_tax_clean.csv")
+
+## End of Cleaning script 
+##------------------------------------------------------------------------------------------------------
+
